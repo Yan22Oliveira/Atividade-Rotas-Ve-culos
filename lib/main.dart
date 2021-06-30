@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
-import './screens/home/home_screen.dart';
+import './helpers/helpers.dart';
+
+import './screens/base_screen/base_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
@@ -13,9 +16,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Atividade Rotas - Veículos',
       theme: ThemeData(
-        primaryColor: Color(0xFFe63946),
+        primaryColor: colorPrimary,
       ),
-      home: HomeScreen(),
+      home: BaseScreen(),
     );
   }
 }

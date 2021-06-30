@@ -1,15 +1,37 @@
 import 'package:flutter/material.dart';
 
+import 'package:firebase_database/firebase_database.dart';
+
+import '../../common/common.dart';
 import '../../mockdata/mockdata.dart';
+import '../../models/models.dart';
 
 import '../veiculos/veiculos_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  List<Montadora> listMontadoras = [];
+
+  late DatabaseReference montadoraReference;
+
+  @override
+  void initState() {
+    super.initState();
+    final FirebaseDatabase database = FirebaseDatabase();
+    montadoraReference.onChildAdded.listen((event) { });
+  }
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
+      drawer: CustomDrawer(),
       backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         title: Text("Montadoras"),

@@ -1,12 +1,34 @@
+import 'package:firebase_database/firebase_database.dart';
+
 class Montadora {
 
-  final int id;
-  final String nome;
-  final String imagem;
+  String? id;
+  String nome = "";
+  String imagem = " ";
 
-  const Montadora({
-    required this.id,
+  Montadora({
+    this.id,
     required this.nome,
     required this.imagem,
   });
+
+  Montadora.create(){
+    id = "";
+    nome = "";
+    imagem = "";
+  }
+
+  Map<String, dynamic> toJson(){
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['nome'] = this.nome;
+    data['imagem'] = this.imagem;
+    return data;
+  }
+
+  Montadora.fromSnapshot(DataSnapshot snapshot){
+    id = snapshot.key;
+    nome = snapshot.value["nome"];
+    imagem = snapshot.value["imagem"];
+  }
+
 }
