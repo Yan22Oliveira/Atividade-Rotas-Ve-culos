@@ -6,54 +6,54 @@ import '../../api/api.dart';
 import '../../helpers/helpers.dart';
 import '../../models/models.dart';
 
-class CadastrartMontadoraScreen extends StatefulWidget {
+class EditarMontadoraScreen extends StatefulWidget {
+
+  final Montadora montadora;
+  EditarMontadoraScreen({required this.montadora});
 
   @override
-  _CadastrartMontadoraScreenState createState() => _CadastrartMontadoraScreenState();
+  _EditarMontadoraScreenState createState() => _EditarMontadoraScreenState();
 }
 
-class _CadastrartMontadoraScreenState extends State<CadastrartMontadoraScreen> {
+class _EditarMontadoraScreenState extends State<EditarMontadoraScreen> {
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final _nomeController = TextEditingController();
-  final _imagenController = TextEditingController();
-
-  void limparCampos(){
-    _nomeController.clear();
-    _imagenController.clear();
-  }
+  Montadora montadora = Montadora.create();
 
   @override
   Widget build(BuildContext context) {
 
-    return Consumer2<CadastrarMontadora,ListaMontadoras>(
+    return Consumer2<EditarMontadora,ListaMontadoras>(
 
-      builder: (_,cadastrarMontadora,listaMontadoras,__){
+      builder: (_,editarMontadora,listaMontadoras,__){
 
         return Scaffold(
           key: scaffoldKey,
           appBar: AppBar(
-            title: Text("Cadastrar Montadora"),
+            title: Text("Editar "+widget.montadora.nome),
             centerTitle: true,
             elevation: 0,
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: cadastrarMontadora.loading?null:()async{
+            onPressed: editarMontadora.loading?null:()async{
 
               if(formKey.currentState!.validate()){
 
-                await cadastrarMontadora.postCadastrarMontadora(
+                await editarMontadora.patchEditarMontadora(
+
                     montadora: Montadora(
-                        nome: _nomeController.text,
-                        imagem: _imagenController.text,
+                      id: widget.montadora.id,
+                      nome: montadora.nome.isNotEmpty?montadora.nome:widget.montadora.nome,
+                      imagem: montadora.imagem.isNotEmpty?montadora.imagem:widget.montadora.imagem,
                     ),
-                  onSuccess: (text)async{
 
-                    listaMontadoras.getListaMontadoras();
+                    onSuccess: (text)async{
 
-                    scaffoldKey.currentState!.showSnackBar(
+                      listaMontadoras.getListaMontadoras();
+
+                      scaffoldKey.currentState!.showSnackBar(
                           SnackBar(
                             content: Text(
                               text,
@@ -64,22 +64,24 @@ class _CadastrartMontadoraScreenState extends State<CadastrartMontadoraScreen> {
                           )
                       );
 
-                    Future.delayed(Duration(seconds: 2)).then((_){
-                      Navigator.pop(context);
-                    });
+                      Future.delayed(Duration(seconds: 2)).then((_){
+                        Navigator.pop(context);
+                      });
 
-                  },
-                  onFail: (text){}
+                    },
+                    onFail: (text){
+
+                    }
                 );
 
               }
 
             },
-            tooltip: 'Cadastrar Montadora',
-            backgroundColor: cadastrarMontadora.loading?Colors.grey:colorPrimary,
-            elevation: cadastrarMontadora.loading?0:3,
+            tooltip: 'Editar Montadora',
+            backgroundColor: editarMontadora.loading?Colors.grey:colorPrimary,
+            elevation: editarMontadora.loading?0:3,
             child: Icon(
-              Icons.save,
+              Icons.edit,
               color: Colors.white,
             ),
           ),
@@ -89,7 +91,7 @@ class _CadastrartMontadoraScreenState extends State<CadastrartMontadoraScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if(cadastrarMontadora.loading)
+                  if(editarMontadora.loading)
                     LinearProgressIndicator(
                       color: Colors.blueAccent,
                       backgroundColor: Colors.white,
@@ -102,12 +104,15 @@ class _CadastrartMontadoraScreenState extends State<CadastrartMontadoraScreen> {
                       children: [
                         const SizedBox(height: 36,),
                         TextFormField(
-                          controller: _nomeController,
+                          initialValue: widget.montadora.nome,
                           keyboardType: TextInputType.text,
                           validator: (text){
                             if(text!.trim().isEmpty)
                               return 'Campo obrigatório';
                             return null;
+                          },
+                          onChanged: (text){
+                            montadora.nome = text;
                           },
                           style: TextStyle(
                             color: Colors.black,
@@ -131,12 +136,15 @@ class _CadastrartMontadoraScreenState extends State<CadastrartMontadoraScreen> {
                         ),
                         const SizedBox(height: 24,),
                         TextFormField(
-                          controller: _imagenController,
+                          initialValue: widget.montadora.imagem,
                           keyboardType: TextInputType.text,
                           validator: (text){
                             if(text!.trim().isEmpty)
                               return 'Campo obrigatório';
                             return null;
+                          },
+                          onChanged: (text){
+                            montadora.imagem = text;
                           },
                           style: TextStyle(
                             color: Colors.black,

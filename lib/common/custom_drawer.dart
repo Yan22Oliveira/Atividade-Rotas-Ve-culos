@@ -20,11 +20,6 @@ class CustomDrawer extends StatelessWidget {
                 title: 'Início',
                 page: 0,
               ),
-              DrawerTile(
-                iconData: Icons.car_repair,
-                title: 'Cadastrar Montadora',
-                page: 1,
-              ),
             ],
           ),
         ],

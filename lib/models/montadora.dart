@@ -31,4 +31,10 @@ class Montadora {
     imagem = snapshot.value["imagem"];
   }
 
+  Montadora.fromJson(Map<String, dynamic> json, String key) {
+    id = key;
+    nome = json["nome"];
+    imagem = json["imagem"];
+  }
+
 }

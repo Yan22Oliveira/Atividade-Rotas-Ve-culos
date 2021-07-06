@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
-import 'package:firebase_database/firebase_database.dart';
+import 'package:provider/provider.dart';
 
+import '../../api/api.dart';
 import '../../common/common.dart';
-import '../../mockdata/mockdata.dart';
-import '../../models/models.dart';
+import '../../helpers/helpers.dart';
 
 import '../veiculos/veiculos_screen.dart';
+import '../cadastrar_montadora/cadastrar_montadora_screen.dart';
+import '../editar_montadora/editar_montadora_screen.dart';
 
 class HomeScreen extends StatefulWidget {
 
@@ -16,81 +18,157 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
-  List<Montadora> listMontadoras = [];
-
-  late DatabaseReference montadoraReference;
-
-  @override
-  void initState() {
-    super.initState();
-    final FirebaseDatabase database = FirebaseDatabase();
-    montadoraReference.onChildAdded.listen((event) { });
-  }
-
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      drawer: CustomDrawer(),
-      backgroundColor: Color(0xFFEEEEEE),
-      appBar: AppBar(
-        title: Text("Montadoras"),
-        elevation: 0,
-        centerTitle: true,
-      ),
-      body: Container(
-        padding: EdgeInsets.all(24),
-        child: ListView.builder(
-          itemCount: listaMontadoras.length,
-          itemBuilder: (context,index){
-            return GestureDetector(
+    return Consumer2<ListaMontadoras,DeletarMontadora>(
 
-              onTap: (){
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => VeiculosScreen(montadora: listaMontadoras[index],),
-                  ),
-                );
-              },
+      builder: (_,listaMontadoras,deletarMontadora,__){
 
-              child: Card(
-               elevation: 3,
-               color: Colors.white,
-               clipBehavior: Clip.antiAlias,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
+        return Scaffold(
+          drawer: CustomDrawer(),
+          backgroundColor: Color(0xFFEEEEEE),
+          appBar: AppBar(
+            title: Text("Montadoras"),
+            elevation: 0,
+            centerTitle: true,
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: (){
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CadastrartMontadoraScreen(),
                 ),
-                child: Container(
-                  height: 80,
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 16,),
-                      Image.network(
-                        listaMontadoras[index].imagem,
-                        fit: BoxFit.cover,
-                        height: 60,
-                      ),
-                      const SizedBox(width: 16,),
-                      Expanded(
-                        child: Text(
-                          listaMontadoras[index].nome,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 20,
-                            letterSpacing: 2,
+              );
+            },
+            elevation: 3,
+            backgroundColor: colorPrimary,
+            child: Icon(Icons.add,color: Colors.white,),
+          ),
+          body: listaMontadoras.loading?
+          Center(
+            child: CircularProgressIndicator(
+              color: colorPrimary,
+            ),
+          ):
+          ListView(
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.all(16),
+                itemCount: listaMontadoras.listaMontadoras.length,
+                itemBuilder: (context,index){
+                  return GestureDetector(
 
-                          ),
+                    onTap: deletarMontadora.loading?null:(){
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => VeiculosScreen(montadora: listaMontadoras.listaMontadoras[index],),
+                        ),
+                      );
+                    },
+
+                    child: Card(
+                      elevation: 3,
+                      color: Colors.white,
+                      clipBehavior: Clip.antiAlias,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Container(
+                        height: 100,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 60,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            listaMontadoras.listaMontadoras[index].nome,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              color: Colors.grey.shade700,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                              letterSpacing: 2,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        GestureDetector(
+                                          onTap:deletarMontadora.loading?null: ()async{
+
+                                           await deletarMontadora.deleteDeletarMontadora(
+                                               montadora: listaMontadoras.listaMontadoras[index],
+                                           );
+
+                                           listaMontadoras.getListaMontadoras();
+
+                                          },
+                                          child: Icon(
+                                            Icons.delete,
+                                            color: Colors.redAccent,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 20,),
+                                        GestureDetector(
+                                          onTap:deletarMontadora.loading?null: (){
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) => EditarMontadoraScreen(montadora: listaMontadoras.listaMontadoras[index],),
+                                              ),
+                                            );
+                                          },
+                                          child: Icon(
+                                            Icons.edit,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16,),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 40,
+                              child: Container(
+                                color: Colors.white,
+                                child: Image.network(
+                                  listaMontadoras.listaMontadoras[index].imagem,
+                                  fit: BoxFit.fitHeight,
+                                  errorBuilder: (context, url, error) => Container(height: 60,width: 60,child: Icon(Icons.error,color: Colors.grey,)),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
-      ),
+            ],
+          ),
+        );
+
+      },
+
     );
 
   }
