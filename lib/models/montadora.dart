@@ -1,5 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
-
 class Montadora {
 
   String? id;
@@ -23,12 +21,6 @@ class Montadora {
     data['nome'] = this.nome;
     data['imagem'] = this.imagem;
     return data;
-  }
-
-  Montadora.fromSnapshot(DataSnapshot snapshot){
-    id = snapshot.key;
-    nome = snapshot.value["nome"];
-    imagem = snapshot.value["imagem"];
   }
 
   Montadora.fromJson(Map<String, dynamic> json, String key) {

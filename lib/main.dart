@@ -33,6 +33,22 @@ class MyApp extends StatelessWidget {
           create: (_) => EditarMontadora(),
           lazy: false,
         ),
+        ChangeNotifierProvider(
+          create: (_) => ListaVeiculos(),
+          lazy: false,
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CadastrarVeiculos(),
+          lazy: false,
+        ),
+        ChangeNotifierProvider(
+          create: (_) => EditarVeiculos(),
+          lazy: false,
+        ),
+        ChangeNotifierProvider(
+          create: (_) => DeletarVeiculos(),
+          lazy: false,
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

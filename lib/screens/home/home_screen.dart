@@ -21,9 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
 
-    return Consumer2<ListaMontadoras,DeletarMontadora>(
+    return Consumer3<ListaMontadoras,DeletarMontadora,ListaVeiculos>(
 
-      builder: (_,listaMontadoras,deletarMontadora,__){
+      builder: (_,listaMontadoras,deletarMontadora,listaVeiculos,__){
 
         return Scaffold(
           drawer: CustomDrawer(),
@@ -60,11 +60,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: listaMontadoras.listaMontadoras.length,
                 itemBuilder: (context,index){
                   return GestureDetector(
-
                     onTap: deletarMontadora.loading?null:(){
+
+                      listaVeiculos.getListaVeiculos(
+                          idMontadora: listaMontadoras.listaMontadoras[index].id!,
+                      );
+
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => VeiculosScreen(montadora: listaMontadoras.listaMontadoras[index],),
+                          builder: (context) => VeiculosScreen(
+                            montadora: listaMontadoras.listaMontadoras[index],
+                          ),
                         ),
                       );
                     },
